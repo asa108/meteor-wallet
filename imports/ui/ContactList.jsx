@@ -1,16 +1,33 @@
 import React, { memo } from "react";
 import { ContactCollection } from "../api/ContactCollection";
-import { useTracker } from "meteor/react-meteor-data";
+import { useSubscribe, useFind } from "meteor/react-meteor-data";
 
 const ContactList = () => {
-  const contacts = useTracker(() => {
-    return ContactCollection.find({}, { sort: { createdAt: -1 } }).fetch();
+  const isLoading = useSubscribe("allContacts");
+
+  const contacts = useFind(() => {
+    return ContactCollection.find({}, { sort: { createdAt: -1 } });
   });
+  // const contacts = useTracker(() => {
+  //   return ContactCollection.find({}, { sort: { createdAt: -1 } }).fetch();
+  // });
 
   const removeContact = (event, _id) => {
     event.preventDefault();
     Meteor.call("contact.remove", { contactId: _id });
   };
+
+  if (isLoading()) {
+    return (
+      <div>
+        <div className="mt-10">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            Loading...
+          </h3>
+        </div>
+      </div>
+    );
+  }
 
   const ContactItem = memo(({ contact }) => {
     return (
@@ -62,6 +79,6 @@ const ContactList = () => {
       </div>
     </div>
   );
-};
+};;;
 
 export default ContactList;
