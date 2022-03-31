@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { ContactCollection } from "../api/ContactCollection";
+import { Meteor } from "meteor/meteor";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ContactForm = () => {
   const [name, setName] = useState("");
@@ -8,13 +10,20 @@ const ContactForm = () => {
 
   const saveContact = (e) => {
     e.preventDefault();
-    ContactCollection.insert({ name, email, imageUrl });
-    setName("");
-    setEmail("");
-    setImageUrl("");
+
+    Meteor.call("contact.insert", { email, name, imageUrl }, (error) => {
+      if (error) {
+        toast.error("All fields need to be filled");
+      } else {
+        setName("");
+        setEmail("");
+        setImageUrl("");
+      }
+    });
   };
   return (
     <form className="mt-6">
+      <ToastContainer />
       <div className="grid grid-cols-6 gap-6">
         <div className="col-span-6 sm:col-span-6 lg:col-span-2">
           <label
