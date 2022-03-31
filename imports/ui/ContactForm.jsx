@@ -15,6 +15,7 @@ const ContactForm = () => {
       if (error) {
         toast.error("All fields need to be filled");
       } else {
+        toast.success("Contact saved");
         setName("");
         setEmail("");
         setImageUrl("");
